@@ -1,0 +1,17 @@
+###
+@ZenXKanAPI_HostAddress = http://localhost:5131
+
+GET {{ZenXKanAPI_HostAddress}}/api/v1/Tasks
+Accept: application/json
+
+###
+GET {{ZenXKanAPI_HostAddress}}/api/v1/Tasks/01J3DMAN1530MMMBSH56JM0C39
+Accept: application/json
+
+###
+POST {{ZenXKanAPI_HostAddress}}/api/v1/Tasks
+Content-Type: application/json
+
+{
+  "title": "Sample 3"
+}
