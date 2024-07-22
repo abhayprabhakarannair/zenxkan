@@ -9,5 +9,5 @@ Personal kanban board
  ```
 - Update database with migrations
  ```shell
- make update_db migration_name=MigrationName
+ make update_db
  ```
