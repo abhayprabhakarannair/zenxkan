@@ -5,7 +5,7 @@ GET {{ZenXKanAPI_HostAddress}}/api/v1/Tasks
 Accept: application/json
 
 ###
-GET {{ZenXKanAPI_HostAddress}}/api/v1/Tasks/01J3DMAN1530MMMBSH56JM0C39
+GET {{ZenXKanAPI_HostAddress}}/api/v1/Tasks/01J3KMXPK938KWZTVRJSQV7HSH
 Accept: application/json
 
 ###
@@ -13,5 +13,6 @@ POST {{ZenXKanAPI_HostAddress}}/api/v1/Tasks
 Content-Type: application/json
 
 {
-  "title": "Sample 3"
+  "projectId": "01J3KMTPRPG93W229D4DFB6J7E",
+  "title": "Sample 1"
 }

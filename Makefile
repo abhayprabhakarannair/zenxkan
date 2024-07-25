@@ -3,6 +3,9 @@ context=ZenXKanContext
 project=ZenXKanCore
 startup_project=ZenXKanAPI
 
+dev_api:
+	dotnet watch --project $(startup_project)
+
 add_migration:
 	dotnet ef migrations add $(migration_name) --context $(context) --project $(project) --startup-project $(startup_project)
 	
