@@ -22,7 +22,7 @@ public class TasksController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<TaskItemDto>>> GetAll()
     {
-        return await _context.Tasks.Select(t => new TaskItemDto(t.Id, t.ParentId, t.Title)).ToListAsync();
+        return await _context.Tasks.Select(t => new TaskItemDto(t.Id, t.ProjectId, t.ParentId, t.Title)).ToListAsync();
     }
 
     // GET api/tasks/5
@@ -34,7 +34,7 @@ public class TasksController : ControllerBase
 
         if (task == null) return NotFound();
 
-        return new TaskItemDto(task.Id, task.ParentId, task.Title);
+        return new TaskItemDto(task.Id, task.ProjectId, task.ParentId, task.Title);
     }
 
 
@@ -43,6 +43,7 @@ public class TasksController : ControllerBase
     public async Task<ActionResult<TaskItemDto>> Post([FromBody] TaskCreateDto taskCreateDto)
     {
         var newTask = new Models.Task(
+            taskCreateDto.ProjectId,
             taskCreateDto.ParentId,
             taskCreateDto.Title
         );
@@ -50,7 +51,7 @@ public class TasksController : ControllerBase
         await _context.SaveChangesAsync();
 
         return CreatedAtAction(nameof(Get), new { id = newTask.Id },
-            new TaskItemDto(newTask.Id, newTask.ParentId, newTask.Title));
+            new TaskItemDto(newTask.Id, newTask.ProjectId, newTask.ParentId, newTask.Title));
     }
 
     // PUT api/tasks/5
