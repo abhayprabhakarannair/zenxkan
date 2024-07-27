@@ -8,33 +8,28 @@ namespace ZenXKanAPI.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class TasksController : ControllerBase
+public class TasksController(ZenXKanContext context) : ControllerBase
 {
-    private readonly ZenXKanContext _context;
-
-
-    public TasksController(ZenXKanContext context)
-    {
-        _context = context;
-    }
-
     // GET: api/tasks
     [HttpGet]
     public async Task<ActionResult<IEnumerable<TaskItemDto>>> GetAll()
     {
-        return await _context.Tasks.Select(t => new TaskItemDto(t.Id, t.ParentId, t.Title)).ToListAsync();
+        return Ok(await context.Tasks.Include(t => t.Tags)
+            .Select(t => new TaskItemDto(t.Id, t.ParentId, t.Title,
+                t.Tags.Select(tt => new TagItemDto(tt.Id, tt.Name, tt.Color))))
+            .ToListAsync());
     }
 
     // GET api/tasks/5
     [HttpGet("{id}")]
     public async Task<ActionResult<TaskItemDto>> Get(Guid id)
     {
-        var task = await _context.Tasks.FindAsync(id);
+        var task = await context.Tasks.FindAsync(id);
 
 
         if (task == null) return NotFound();
 
-        return new TaskItemDto(task.Id, task.ParentId, task.Title);
+        return Ok(new TaskItemDto(task.Id, task.ParentId, task.Title));
     }
 
 
@@ -46,8 +41,15 @@ public class TasksController : ControllerBase
             taskCreateDto.ParentId,
             taskCreateDto.Title
         );
-        _context.Tasks.Add(newTask);
-        await _context.SaveChangesAsync();
+
+        if (taskCreateDto.TagIds != null)
+            newTask.TaskTags = taskCreateDto.TagIds
+                .Select(tagId => new Models.TaskTag { TagId = tagId, TaskId = newTask.Id })
+                .ToList();
+
+
+        context.Tasks.Add(newTask);
+        await context.SaveChangesAsync();
 
         return CreatedAtAction(nameof(Get), new { id = newTask.Id },
             new TaskItemDto(newTask.Id, newTask.ParentId, newTask.Title));
@@ -55,22 +57,50 @@ public class TasksController : ControllerBase
 
     // PUT api/tasks/5
     [HttpPut("{id}")]
-    public async Task<ActionResult<TaskItemDto>> Put(Guid id, [FromBody] string value)
+    public async Task<ActionResult<TaskItemDto>> Put(Guid id, [FromBody] TaskUpdateDto taskUpdateDto)
     {
-        return NotFound();
+        var task = await context.Tasks.Include(t => t.Tags).FirstOrDefaultAsync(t => t.Id == id);
+
+        if (task == null) return NotFound();
+
+        task.Title = taskUpdateDto.Title;
+        task.ParentId = taskUpdateDto.ParentId;
+
+        var newTags = taskUpdateDto.TagIds ?? [];
+        var currentTags = task.Tags.Select(t => t.Id).ToList();
+
+        foreach (var tagId in currentTags.Except(newTags).ToList())
+            task.Tags.Remove(task.Tags.First(t => t.Id == tagId));
+
+        foreach (var tagId in newTags.Except(currentTags).ToList())
+        {
+            var softDeletedTags = await context.TaskTags
+                .IgnoreQueryFilters().Where(tt => tt.TaskId == task.Id && tt.TagId == tagId && tt.DeletedAt != null)
+                .ToListAsync();
+
+            if (softDeletedTags.Count == 0)
+                task.TaskTags.Add(new Models.TaskTag { TagId = tagId, TaskId = task.Id });
+            else
+                softDeletedTags.ForEach(t => t.DeletedAt = null);
+        }
+
+        await context.SaveChangesAsync();
+
+        return Ok(new TaskItemDto(task.Id, task.ParentId, task.Title,
+            task.Tags.Select(t => new TagItemDto(t.Id, t.Name, t.Color))));
     }
 
     // DELETE api/tasks/5
     [HttpDelete("{id}")]
     public async Task<ActionResult<TaskItemDto>> Delete(Guid id)
     {
-        var task = await _context.Tasks.FindAsync(id);
+        var task = await context.Tasks.FindAsync(id);
 
         if (task == null) return NotFound();
 
-        _context.Remove(task);
-        await _context.SaveChangesAsync();
+        context.Remove(task);
+        await context.SaveChangesAsync();
 
-        return new TaskItemDto(task.Id, task.ParentId, task.Title);
+        return Ok(new TaskItemDto(task.Id, task.ParentId, task.Title));
     }
 }

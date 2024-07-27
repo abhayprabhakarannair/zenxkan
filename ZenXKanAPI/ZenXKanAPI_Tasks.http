@@ -5,7 +5,7 @@ GET {{ZenXKanAPI_HostAddress}}/api/v1/tasks
 Accept: application/json
 
 ###
-GET {{ZenXKanAPI_HostAddress}}/api/v1/tasks/15f6b104-fd9f-4725-b9d0-cfe884df4fab
+GET {{ZenXKanAPI_HostAddress}}/api/v1/tasks/c3472d19-5a02-48e3-bfc7-f12220667223
 Accept: application/json
 
 ###
@@ -13,9 +13,25 @@ POST {{ZenXKanAPI_HostAddress}}/api/v1/tasks
 Content-Type: application/json
 
 {
-  "title": "Sample 4"
+  "title": "Sample 5",
+  "tagIds": [
+    "51d881a9-8c64-4859-a598-7f7cbc9c4987",
+    "0245dc1e-6c34-4c1d-b9ae-bd3b20a55785"
+  ]
 }
 
 ###
 DELETE {{ZenXKanAPI_HostAddress}}/api/v1/tasks/53ea4b57-68d3-4c2b-9de5-838dd671e4d2
 Accept: application/json
+
+###
+PUT {{ZenXKanAPI_HostAddress}}/api/v1/tasks/c3472d19-5a02-48e3-bfc7-f12220667223
+Content-Type: application/json
+
+{
+  "title": "Sample 5 - Updated",
+  "tagIds": [
+    "51d881a9-8c64-4859-a598-7f7cbc9c4987",
+    "0245dc1e-6c34-4c1d-b9ae-bd3b20a55785"
+  ]
+}

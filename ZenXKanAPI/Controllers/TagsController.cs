@@ -8,28 +8,20 @@ namespace ZenXKanAPI.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class TagsController : ControllerBase
+public class TagsController(ZenXKanContext context) : ControllerBase
 {
-    private readonly ZenXKanContext _context;
-
-
-    public TagsController(ZenXKanContext context)
-    {
-        _context = context;
-    }
-
     // GET: api/tags
     [HttpGet]
     public async Task<ActionResult<IEnumerable<TagItemDto>>> GetAll()
     {
-        return await _context.Tags.Select(t => new TagItemDto(t.Id, t.Name, t.Color)).ToListAsync();
+        return await context.Tags.Select(t => new TagItemDto(t.Id, t.Name, t.Color)).ToListAsync();
     }
 
     // GET api/tags/5
     [HttpGet("{id}")]
     public async Task<ActionResult<TagItemDto>> Get(Guid id)
     {
-        var tag = await _context.Tags.FindAsync(id);
+        var tag = await context.Tags.FindAsync(id);
 
 
         if (tag == null) return NotFound();
@@ -46,8 +38,8 @@ public class TagsController : ControllerBase
             tagCreateDto.Name,
             tagCreateDto.Color
         );
-        _context.Tags.Add(newTag);
-        await _context.SaveChangesAsync();
+        context.Tags.Add(newTag);
+        await context.SaveChangesAsync();
 
         return CreatedAtAction(nameof(Get), new { id = newTag.Id },
             new TagItemDto(newTag.Id, newTag.Name, newTag.Color));
@@ -64,12 +56,12 @@ public class TagsController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<ActionResult<TagItemDto>> Delete(Guid id)
     {
-        var tag = await _context.Tags.FindAsync(id);
+        var tag = await context.Tags.FindAsync(id);
 
         if (tag == null) return NotFound();
 
-        _context.Remove(tag);
-        await _context.SaveChangesAsync();
+        context.Remove(tag);
+        await context.SaveChangesAsync();
 
         return new TagItemDto(tag.Id, tag.Name, tag.Color);
     }
