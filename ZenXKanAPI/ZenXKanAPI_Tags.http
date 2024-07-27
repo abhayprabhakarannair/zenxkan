@@ -5,7 +5,7 @@ GET {{ZenXKanAPI_HostAddress}}/api/v1/tags
 Accept: application/json
 
 ###
-GET {{ZenXKanAPI_HostAddress}}/api/v1/tags/01J3KMTPRPG93W229D4DFB6J7E
+GET {{ZenXKanAPI_HostAddress}}/api/v1/tags/0245dc1e-6c34-4c1d-b9ae-bd3b20a55785
 Accept: application/json
 
 ###
@@ -13,6 +13,10 @@ POST {{ZenXKanAPI_HostAddress}}/api/v1/tags
 Content-Type: application/json
 
 {
-  "Name": "Tag 1",
-  "Color": "red"
+  "Name": "Tag 2",
+  "Color": "yellow"
 }
+
+###
+DELETE {{ZenXKanAPI_HostAddress}}/api/v1/tags/0245dc1e-6c34-4c1d-b9ae-bd3b20a55785
+Accept: application/json

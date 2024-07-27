@@ -13,6 +13,9 @@ POST {{ZenXKanAPI_HostAddress}}/api/v1/tasks
 Content-Type: application/json
 
 {
-  "parentId": "15f6b104-fd9f-4725-b9d0-cfe884df4fab",
-  "title": "Sample 3"
+  "title": "Sample 4"
 }
+
+###
+DELETE {{ZenXKanAPI_HostAddress}}/api/v1/tasks/53ea4b57-68d3-4c2b-9de5-838dd671e4d2
+Accept: application/json

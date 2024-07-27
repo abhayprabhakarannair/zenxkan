@@ -55,13 +55,22 @@ public class TagsController : ControllerBase
 
     // PUT api/tags/5
     [HttpPut("{id}")]
-    public void Put(int id, [FromBody] string value)
+    public async Task<ActionResult<TagItemDto>> Put(Guid id, [FromBody] string value)
     {
+        return NotFound();
     }
 
     // DELETE api/tags/5
     [HttpDelete("{id}")]
-    public void Delete(int id)
+    public async Task<ActionResult<TagItemDto>> Delete(Guid id)
     {
+        var tag = await _context.Tags.FindAsync(id);
+
+        if (tag == null) return NotFound();
+
+        _context.Remove(tag);
+        await _context.SaveChangesAsync();
+
+        return new TagItemDto(tag.Id, tag.Name, tag.Color);
     }
 }

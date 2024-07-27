@@ -55,13 +55,22 @@ public class TasksController : ControllerBase
 
     // PUT api/tasks/5
     [HttpPut("{id}")]
-    public void Put(int id, [FromBody] string value)
+    public async Task<ActionResult<TaskItemDto>> Put(Guid id, [FromBody] string value)
     {
+        return NotFound();
     }
 
     // DELETE api/tasks/5
     [HttpDelete("{id}")]
-    public void Delete(int id)
+    public async Task<ActionResult<TaskItemDto>> Delete(Guid id)
     {
+        var task = await _context.Tasks.FindAsync(id);
+
+        if (task == null) return NotFound();
+
+        _context.Remove(task);
+        await _context.SaveChangesAsync();
+
+        return new TaskItemDto(task.Id, task.ParentId, task.Title);
     }
 }
