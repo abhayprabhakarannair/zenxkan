@@ -18,5 +18,5 @@ public class Task : BaseEntity
 
     public ICollection<Task> SubTasks { get; } = [];
     public ICollection<Tag> Tags { get; } = [];
-    public ICollection<TaskTag> TaskTags { get; } = [];
+    public ICollection<TaskTag> TaskTags { get; set; } = new List<TaskTag>();
 }
