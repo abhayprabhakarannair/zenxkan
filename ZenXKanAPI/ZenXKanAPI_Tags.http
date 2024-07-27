@@ -1,0 +1,18 @@
+###
+@ZenXKanAPI_HostAddress = http://localhost:5131
+
+GET {{ZenXKanAPI_HostAddress}}/api/v1/tags
+Accept: application/json
+
+###
+GET {{ZenXKanAPI_HostAddress}}/api/v1/tags/01J3KMTPRPG93W229D4DFB6J7E
+Accept: application/json
+
+###
+POST {{ZenXKanAPI_HostAddress}}/api/v1/tags
+Content-Type: application/json
+
+{
+  "Name": "Tag 1",
+  "Color": "red"
+}

@@ -1,18 +1,18 @@
 ###
 @ZenXKanAPI_HostAddress = http://localhost:5131
 
-GET {{ZenXKanAPI_HostAddress}}/api/v1/Tasks
+GET {{ZenXKanAPI_HostAddress}}/api/v1/tasks
 Accept: application/json
 
 ###
-GET {{ZenXKanAPI_HostAddress}}/api/v1/Tasks/01J3KMXPK938KWZTVRJSQV7HSH
+GET {{ZenXKanAPI_HostAddress}}/api/v1/tasks/15f6b104-fd9f-4725-b9d0-cfe884df4fab
 Accept: application/json
 
 ###
-POST {{ZenXKanAPI_HostAddress}}/api/v1/Tasks
+POST {{ZenXKanAPI_HostAddress}}/api/v1/tasks
 Content-Type: application/json
 
 {
-  "projectId": "01J3KMTPRPG93W229D4DFB6J7E",
-  "title": "Sample 1"
+  "parentId": "15f6b104-fd9f-4725-b9d0-cfe884df4fab",
+  "title": "Sample 3"
 }

@@ -1,24 +1,22 @@
 namespace ZenXKanCore.Models;
 
-public class Task
+public class Task : BaseEntity
 {
-    public Task(Ulid projectId, Ulid? parentId, string title)
+    public Task(Guid? parentId, string title)
     {
-        Id = Ulid.NewUlid();
-        ProjectId = projectId;
+        Id = Guid.NewGuid();
         ParentId = parentId;
         Title = title;
     }
 
-    public Ulid Id { get; set; }
-    public Ulid? ParentId { get; set; }
+    public Guid Id { get; set; }
+    public Guid? ParentId { get; set; }
 
     public string Title { get; set; }
 
     public Task Parent { get; set; }
-    public ICollection<Task> SubTasks { get; set; }
 
-
-    public Ulid ProjectId { get; set; }
-    public Project Project { get; set; }
+    public ICollection<Task> SubTasks { get; } = [];
+    public ICollection<Tag> Tags { get; } = [];
+    public ICollection<TaskTag> TaskTags { get; } = [];
 }

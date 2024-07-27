@@ -10,7 +10,7 @@ builder.Services.AddDbContext<ZenXKanContext>(options =>
     var dbInitializer = new DatabaseInitializer();
     var dbPath = dbInitializer.InitializeDatabase();
 
-    options.UseSqlite($"Data Source={dbPath}");
+    options.UseSqlite($"Data Source={dbPath}").UseSnakeCaseNamingConvention();
 });
 
 
