@@ -14,9 +14,18 @@ public class TasksController(ZenXKanContext context) : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<TaskItemDto>>> GetAll()
     {
-        return Ok(await context.Tasks.Include(t => t.Tags)
-            .Select(t => new TaskItemDto(t.Id, t.ParentId, t.Title, t.Description, t.ViewOrderId,
-                t.Tags.Select(tt => new TagItemDto(tt.Id, tt.Name, tt.Color))))
+        return Ok(await context.Tasks
+            .OrderBy(t => t.ViewOrderId)
+            .Include(t => t.Tags)
+            .Select(t =>
+                new TaskItemDto(
+                    t.Id,
+                    t.ParentId,
+                    t.Title,
+                    t.Description,
+                    t.ViewOrderId,
+                    t.Tags.Select(tt => new TagItemDto(tt.Id, tt.Name, tt.Color)))
+            )
             .ToListAsync());
     }
 
@@ -48,6 +57,7 @@ public class TasksController(ZenXKanContext context) : ControllerBase
                 .Select(tagId => new Models.TaskTag { TagId = tagId, TaskId = newTask.Id })
                 .ToList();
 
+        newTask.ViewOrderId = await _generateViewOrderIdForNewTask();
 
         context.Tasks.Add(newTask);
         await context.SaveChangesAsync();
@@ -89,5 +99,12 @@ public class TasksController(ZenXKanContext context) : ControllerBase
         await context.SaveChangesAsync();
 
         return Ok(new TaskItemDto(task.Id, task.ParentId, task.Title, task.Description, task.ViewOrderId));
+    }
+
+
+    private async Task<double> _generateViewOrderIdForNewTask()
+    {
+        var minViewOrderId = await context.Tasks.MinAsync(t => t.ViewOrderId);
+        return minViewOrderId / 2;
     }
 }

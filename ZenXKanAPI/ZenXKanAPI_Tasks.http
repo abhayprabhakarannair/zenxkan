@@ -13,9 +13,9 @@ POST {{ZenXKanAPI_HostAddress}}/api/v1/tasks
 Content-Type: application/json
 
 {
-  "title": "Sample 5",
+  "title": "Sample 7",
+  "Description": "Second task with view order id",
   "tagIds": [
-    "51d881a9-8c64-4859-a598-7f7cbc9c4987",
     "0245dc1e-6c34-4c1d-b9ae-bd3b20a55785"
   ]
 }
