@@ -16,7 +16,6 @@ public class ZenXKanContext(DbContextOptions<ZenXKanContext> options) : DbContex
     {
         modelBuilder.ApplyConfiguration(new TaskEntityTypeConfiguration());
         modelBuilder.ApplyConfiguration(new TagEntityTypeConfiguration());
-        modelBuilder.ApplyConfiguration(new TaskTagEntityTypeConfiguration());
     }
 
     public override int SaveChanges()

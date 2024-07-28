@@ -25,13 +25,13 @@ DELETE {{ZenXKanAPI_HostAddress}}/api/v1/tasks/53ea4b57-68d3-4c2b-9de5-838dd671e
 Accept: application/json
 
 ###
-PUT {{ZenXKanAPI_HostAddress}}/api/v1/tasks/c3472d19-5a02-48e3-bfc7-f12220667223
+PUT {{ZenXKanAPI_HostAddress}}/api/v1/tasks/2c3acb47-6722-4afa-bfb8-b581b8d5b97a
 Content-Type: application/json
 
 {
-  "title": "Sample 5 - Updated",
+  "title": "Sample 5",
+  "Description": "Nothing is changed",
   "tagIds": [
-    "51d881a9-8c64-4859-a598-7f7cbc9c4987",
-    "0245dc1e-6c34-4c1d-b9ae-bd3b20a55785"
+    "51d881a9-8c64-4859-a598-7f7cbc9c4987"
   ]
 }
