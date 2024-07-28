@@ -15,7 +15,7 @@ public class TasksController(ZenXKanContext context) : ControllerBase
     public async Task<ActionResult<IEnumerable<TaskItemDto>>> GetAll()
     {
         return Ok(await context.Tasks.Include(t => t.Tags)
-            .Select(t => new TaskItemDto(t.Id, t.ParentId, t.Title,
+            .Select(t => new TaskItemDto(t.Id, t.ParentId, t.Title, t.Description, t.ViewOrderId,
                 t.Tags.Select(tt => new TagItemDto(tt.Id, tt.Name, tt.Color))))
             .ToListAsync());
     }
@@ -29,7 +29,7 @@ public class TasksController(ZenXKanContext context) : ControllerBase
 
         if (task == null) return NotFound();
 
-        return Ok(new TaskItemDto(task.Id, task.ParentId, task.Title));
+        return Ok(new TaskItemDto(task.Id, task.ParentId, task.Title, task.Description, task.ViewOrderId));
     }
 
 
@@ -39,7 +39,8 @@ public class TasksController(ZenXKanContext context) : ControllerBase
     {
         var newTask = new Models.Task(
             taskCreateDto.ParentId,
-            taskCreateDto.Title
+            taskCreateDto.Title,
+            taskCreateDto.Description
         );
 
         if (taskCreateDto.TagIds != null)
@@ -52,7 +53,7 @@ public class TasksController(ZenXKanContext context) : ControllerBase
         await context.SaveChangesAsync();
 
         return CreatedAtAction(nameof(Get), new { id = newTask.Id },
-            new TaskItemDto(newTask.Id, newTask.ParentId, newTask.Title));
+            new TaskItemDto(newTask.Id, newTask.ParentId, newTask.Title, newTask.Description, newTask.ViewOrderId));
     }
 
     // PUT api/tasks/5
@@ -66,27 +67,13 @@ public class TasksController(ZenXKanContext context) : ControllerBase
         task.Title = taskUpdateDto.Title;
         task.ParentId = taskUpdateDto.ParentId;
 
-        var newTags = taskUpdateDto.TagIds ?? [];
-        var currentTags = task.Tags.Select(t => t.Id).ToList();
-
-        foreach (var tagId in currentTags.Except(newTags).ToList())
-            task.Tags.Remove(task.Tags.First(t => t.Id == tagId));
-
-        foreach (var tagId in newTags.Except(currentTags).ToList())
-        {
-            var softDeletedTags = await context.TaskTags
-                .IgnoreQueryFilters().Where(tt => tt.TaskId == task.Id && tt.TagId == tagId && tt.DeletedAt != null)
-                .ToListAsync();
-
-            if (softDeletedTags.Count == 0)
-                task.TaskTags.Add(new Models.TaskTag { TagId = tagId, TaskId = task.Id });
-            else
-                softDeletedTags.ForEach(t => t.DeletedAt = null);
-        }
+        task.TaskTags.Clear();
+        foreach (var tagId in taskUpdateDto.TagIds ?? [])
+            task.TaskTags.Add(new Models.TaskTag { TagId = tagId, TaskId = task.Id });
 
         await context.SaveChangesAsync();
 
-        return Ok(new TaskItemDto(task.Id, task.ParentId, task.Title,
+        return Ok(new TaskItemDto(task.Id, task.ParentId, task.Title, task.Description, task.ViewOrderId,
             task.Tags.Select(t => new TagItemDto(t.Id, t.Name, t.Color))));
     }
 
@@ -101,6 +88,6 @@ public class TasksController(ZenXKanContext context) : ControllerBase
         context.Remove(task);
         await context.SaveChangesAsync();
 
-        return Ok(new TaskItemDto(task.Id, task.ParentId, task.Title));
+        return Ok(new TaskItemDto(task.Id, task.ParentId, task.Title, task.Description, task.ViewOrderId));
     }
 }
