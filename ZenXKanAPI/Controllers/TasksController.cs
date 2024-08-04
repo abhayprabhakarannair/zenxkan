@@ -24,6 +24,7 @@ public class TasksController(ZenXKanContext context) : ControllerBase
                     t.Title,
                     t.Description,
                     t.ViewOrderId,
+                    t.CompletedAt,
                     t.Tags.Select(tt => new TagItemDto(tt.Id, tt.Name, tt.Color)))
             )
             .ToListAsync());
@@ -38,7 +39,8 @@ public class TasksController(ZenXKanContext context) : ControllerBase
 
         if (task == null) return NotFound();
 
-        return Ok(new TaskItemDto(task.Id, task.ParentId, task.Title, task.Description, task.ViewOrderId));
+        return Ok(new TaskItemDto(task.Id, task.ParentId, task.Title, task.Description, task.ViewOrderId,
+            task.CompletedAt));
     }
 
 
@@ -63,7 +65,8 @@ public class TasksController(ZenXKanContext context) : ControllerBase
         await context.SaveChangesAsync();
 
         return CreatedAtAction(nameof(Get), new { id = newTask.Id },
-            new TaskItemDto(newTask.Id, newTask.ParentId, newTask.Title, newTask.Description, newTask.ViewOrderId));
+            new TaskItemDto(newTask.Id, newTask.ParentId, newTask.Title, newTask.Description, newTask.ViewOrderId,
+                null));
     }
 
     // PUT api/tasks/5
@@ -84,6 +87,25 @@ public class TasksController(ZenXKanContext context) : ControllerBase
         await context.SaveChangesAsync();
 
         return Ok(new TaskItemDto(task.Id, task.ParentId, task.Title, task.Description, task.ViewOrderId,
+            task.CompletedAt,
+            task.Tags.Select(t => new TagItemDto(t.Id, t.Name, t.Color))));
+    }
+
+
+    // PUT api/tasks/5/complete
+    [HttpPatch("{id}/complete")]
+    public async Task<ActionResult<TaskItemDto>> Completed(Guid id)
+    {
+        var task = await context.Tasks.Include(t => t.Tags).FirstOrDefaultAsync(t => t.Id == id);
+
+        if (task == null) return NotFound();
+
+        task.CompletedAt = DateTime.Now;
+
+        await context.SaveChangesAsync();
+
+        return Ok(new TaskItemDto(task.Id, task.ParentId, task.Title, task.Description, task.ViewOrderId,
+            task.CompletedAt,
             task.Tags.Select(t => new TagItemDto(t.Id, t.Name, t.Color))));
     }
 
@@ -98,7 +120,8 @@ public class TasksController(ZenXKanContext context) : ControllerBase
         context.Remove(task);
         await context.SaveChangesAsync();
 
-        return Ok(new TaskItemDto(task.Id, task.ParentId, task.Title, task.Description, task.ViewOrderId));
+        return Ok(new TaskItemDto(task.Id, task.ParentId, task.Title, task.Description, task.ViewOrderId,
+            task.CompletedAt));
     }
 
 
