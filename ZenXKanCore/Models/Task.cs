@@ -17,6 +17,8 @@ public class Task : BaseEntity
     public string? Description { get; set; }
     public double ViewOrderId { get; set; }
 
+    public DateTime? CompletedAt { get; set; }
+
     public Task Parent { get; set; }
 
     public ICollection<Task> SubTasks { get; } = [];
